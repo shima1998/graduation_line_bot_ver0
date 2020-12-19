@@ -4,29 +4,21 @@
 require "cgi"
 require "uri"
 require "json"
+require "net/http"
 
-data = CGI.new()
+# Only receive POST_Data
+# I want to receive POST_Data from CGI, but I couldn't get String. I get string "#<CGI:~~~~~>" from CGI only.
+
+post = $stdin.read
 
 a = "aaaaaaa"
 
-# dJson = JSON.parse(data.to_s)
-
-dStr = data.to_s
-
-# p = post.to_s
-
+p = post.to_s
 #d = data
-
 print "Content-type: text/html\n\n"
-
 print a
-print "<br>"
-print dStr
-# print dJson
-
-
 f =File.open("test_stdin.txt", "w")
-f.write(dStr)  # ファイルに書き込む
+f.write(p)  # ファイルに書き込む
 f.close
 
 ###########################################################################################
