@@ -11,6 +11,31 @@ require "uri"
 
 post = $stdin.read
 
+###########################################################################################
+# WebhookURLのverify時に送られるJSONは{"events":[],"destination":"任意のdestination"}
+# 
+# 文章が送られてきたときのデータは改行なしで、JSON形式
+# {
+# "events":[{
+#     "type":"message",
+#     "replyToken":"任意のリプライトークン",
+#     "source":{
+#         "userId":"ユーザーのID",
+#         "type":"user"
+#         },
+#     "timestamp":任意のタイムスタンプ(int),
+#     "mode":"active",
+#     "message":{
+#         "type":"text",
+#         "id":"任意のID",
+#         "text":"ふぁふぁふぁ"
+#         }
+#     }],
+# "destination":"任意のdestination"
+# }
+###########################################################################################
+
+
 a = "aaaaaaa"
 
 p = post.to_s
