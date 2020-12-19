@@ -20,39 +20,8 @@ print "<br>"
 print data['book_name'].to_s
 
 f =File.open("test_stdin.txt", "w")
-f.write(data['destination'].to_s)  # ファイルに書き込む
+f.write(data['events'][0]['message']['text'].to_s)  # ファイルに書き込む
 f.close
-   
-# print "<br>"
-# #print data['book_name']
-# print "<br>"
-# #print "content: " + data.content_type
-# print "<br>"
-# #print data.content_length
-# print "<br>"
-# #print data.query_string
-# print "<br>"
-# #print data.request_method
-# print "<br>"
-# print "stdin: " + s
-# print "<br>"
-# print s.length
-# print "<br>"
-# print "stdinsplit: " + s.split("&").to_s
-# print "<br>"
-# #print p
-# print "<br>"
-# #print p.length
-# print "<br>"
-# #print URI.decode_www_form(d)
-# print "<br>"
-# #print URI.decode_www_form(p)
-# print "<br>"
-
-# s = STDIN.read
-
-
-# post = $stdin.read
 
 ###########################################################################################
 # POSTで送られてきたJSONをまんまtxtに入れてみた結果                                          #
