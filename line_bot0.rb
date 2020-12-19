@@ -1,39 +1,55 @@
 #!/usr/bin/ruby
 # -*- coding: utf-8 -*-
 
-require 'mysql2'
-require 'cgi'
-require 'date'
+require "cgi"
+require "uri"
 
-data=CGI.new()
+#data = CGI.new()
 
-#グローバル変数
-$_GET = {}
-$_POST = {}
-$_COOKIE = {}
-$_FILES = []
+# s = STDIN.read
 
-s = STDIN.read
 
-# Rubyの正規表現による置換
-s = s.gsub(/[\d]+/,'') #数値を除去
+post = $stdin.read
 
-# # 正規表現で判定
-# if s =~ /\A\d+\z/
-#     # 数値のみ
-# end
+a = "aaaaaaa"
 
-# リクエストのメソッド判定
-if ENV['REQUEST_METHOD']=='POST'
+p = post.to_s
 
-　　# multipart/form-data を判定
-  if ENV['CONTENT_TYPE'].match(/multipart/form-data; boundary=(.+)/)
+#d = data
 
-　　　　# 区切り文字列のboundaryを取得して渡し
-    $_POST = multipart($1)
 
-  else
-　　　　# 標準入力から取り出して渡し
-    $_POST = decode(STDIN.read)
-  end
-end
+
+
+print "Content-type: text/html\n\n"
+
+print a
+
+f =File.open("test_stdin.txt", "w")
+f.write(p)  # ファイルに書き込む
+f.close
+   
+# print "<br>"
+# #print data['book_name']
+# print "<br>"
+# #print "content: " + data.content_type
+# print "<br>"
+# #print data.content_length
+# print "<br>"
+# #print data.query_string
+# print "<br>"
+# #print data.request_method
+# print "<br>"
+# print "stdin: " + s
+# print "<br>"
+# print s.length
+# print "<br>"
+# print "stdinsplit: " + s.split("&").to_s
+# print "<br>"
+# #print p
+# print "<br>"
+# #print p.length
+# print "<br>"
+# #print URI.decode_www_form(d)
+# print "<br>"
+# #print URI.decode_www_form(p)
+# print "<br>"
