@@ -9,6 +9,10 @@ data = CGI.new()
 
 a = "aaaaaaa"
 
+# dJson = JSON.parse(data.to_s)
+
+dStr = data.to_s
+
 # p = post.to_s
 
 #d = data
@@ -17,10 +21,12 @@ print "Content-type: text/html\n\n"
 
 print a
 print "<br>"
-print data['book_name'].to_s
+print dStr
+# print dJson
+
 
 f =File.open("test_stdin.txt", "w")
-f.write(data['events'][0]['message']['text'].to_s)  # ファイルに書き込む
+f.write(dStr)  # ファイルに書き込む
 f.close
 
 ###########################################################################################
