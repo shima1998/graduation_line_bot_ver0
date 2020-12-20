@@ -5,23 +5,28 @@ require "cgi"
 require "uri"
 require "json"
 require "net/http"
+# Only receive POST_Data                                                                                                  
+# I want to receive POST_Data from CGI, but I couldn't get String. I get string "#<CGI:~~~~~>" from CGI only.             
 
-# Only receive POST_Data
-# I want to receive POST_Data from CGI, but I couldn't get String. I get string "#<CGI:~~~~~>" from CGI only.
+data = CGI.new()
 
-post = $stdin.read
-
-a = "aaaaaaa"
-
-p = post.to_s
-#d = data
+d = data.keys
 print "Content-type: text/html\n\n"
-print a
-f =File.open("test_stdin.txt", "w")
-f.write(p)  # ファイルに書き込む
-f.close
+
+
+f=File.open("test_stdin.txt", "w")
+f.write("length:" + (d.length).to_s + "\n")
+for i in 0..(d.length - 1) do
+ f.write("key:" + d[i]+ "\n")  # ファイルに書き込む                                                                       
+ f.write("value:" + data[d[i]] + "\n")
+ dJson = JSON.parse(d[i])
+ f.write("json: " + dJson["destination"].to_s + "\n")
+end
+
 
 ###########################################################################################
+###########################################################################################
+
 # POSTで送られてきたJSONをまんまtxtに入れてみた結果                                          #
 ###########################################################################################
 # WebhookURLのverify時に送られるJSONは
