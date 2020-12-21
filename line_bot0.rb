@@ -10,9 +10,10 @@ require "net/http"
 
 data = CGI.new()
 
-# targetUri = "https://api.line.me/v2/bot/message/reply"
-# uri = URI.parse(targetUri)#URLをURIオブジェクトにしてRubyでオブジェクトとして使えるようにしている
-# httpReq = Net::HTTP.new(uri.host, uri.port)
+targetUri = "https://api.line.me/v2/bot/message/reply"
+uri = URI.parse(targetUri)#URLをURIオブジェクトにしてRubyでオブジェクトとして使えるようにしている
+httpReq = Net::HTTP::Post.new(uri)
+channelAccessToken = "任意のチャンネルアクセストークン"
 
 dValue = data.keys#LINEAPIで使うJSONが格納されてる
 
@@ -21,19 +22,34 @@ dValue = data.keys#LINEAPIで使うJSONが格納されてる
 # replyToken = dJson['events'][0]['replyToken'].to_s
 
 
-print "Content-type: text/html\n\n"
+#print "Content-type: text/html\n\n"
 
 f=File.open("test_stdin.txt", "w")
 f.write("length:" + (dValue.length).to_s + "\n")
 for i in 0..(dValue.length - 1) do
     f.write("key:" + dValue[i]+ "\n")  # ファイルに書き込む                                                                       
     f.write("value:" + data[dValue[i]] + "\n")
-    dJson = JSON.parse(dValue[i])
-    f.write("Jsonlength:" + (dJson.length).to_s + "\n")
-    f.write("jsonDesitination: " + dJson["destination"].to_s + "\n")
-    f.write("jsonEvents: " + dJson['events'][0].to_s + "\n")
-    f.write("jsonReplyToken: " + dJson['events'][0]['replyToken'].to_s + "\n")
+    dJ = JSON.parse(dValue[i])
+    f.write("Jsonlength:" + (dJ.length).to_s + "\n")
+    f.write("jsonDesitination: " + dJ["destination"].to_s + "\n")
+    f.write("jsonEvents: " + dJ['events'][0].to_s + "\n")
+    f.write("jsonReplyToken: " + dJ['events'][0]['replyToken'].to_s + "\n")
 end
+
+dJson = JSON.parse(dValue[0])
+rToken = dJson['events'][0]['replyToken'].to_s
+
+httpReq.content_type = "application/json"
+httpReq["Authorization"] = "Bearer #{channelAccessToken}"
+httpReq.body = JSON.dump({
+    replyToken => "#{rToken}",
+    messages => [
+      {
+        type => text,
+        text => "Hello, user"
+      }
+    ]
+  })
 
 # channelAccessToken = "任意のチャンネルアクセストークン"
 # replyJsonStr = "{
