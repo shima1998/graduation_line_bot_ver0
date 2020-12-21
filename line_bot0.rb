@@ -45,11 +45,22 @@ httpReq.body = JSON.dump({
     replyToken => "#{rToken}",
     messages => [
       {
-        type => text,
+        type => "text",
         text => "Hello, user"
       }
     ]
   })
+
+reqOptions = {
+  use_ssl: uri.scheme == "https",
+}
+
+response = Net::HTTP.start(uri.hostname, uri.port, reqOptions) do |http|
+  http.request(httpReq)
+end
+
+# response.code
+# response.body
 
 # channelAccessToken = "任意のチャンネルアクセストークン"
 # replyJsonStr = "{
