@@ -10,52 +10,56 @@ require "net/http"
 
 data = CGI.new()
 
-targetUri = "https://api.line.me/v2/bot/message/reply"
-uri = URI.parse(targetUri)#URLをURIオブジェクトにしてRubyでオブジェクトとして使えるようにしている
-httpReq = Net::HTTP.new(uri.host, uri.port)
+# targetUri = "https://api.line.me/v2/bot/message/reply"
+# uri = URI.parse(targetUri)#URLをURIオブジェクトにしてRubyでオブジェクトとして使えるようにしている
+# httpReq = Net::HTTP.new(uri.host, uri.port)
 
 dValue = data.keys#LINEAPIで使うJSONが格納されてる
 
-dJson = JSON.parse(dValue)#データをJSON化した
+# dJson = JSON.parse(dValue[0])#データをJSON化した
 
-replyToken = dJson['events'][0]['replyToken'].to_s
+# replyToken = dJson['events'][0]['replyToken'].to_s
 
-f=File.open("test_stdin.txt", "w")
-f.write("length:" + (dValue.length).to_s + "\n")
-f.write("Jsonlength:" + (dJson.length).to_s + "\n")
-for i in 0..(dValue.length - 1) do
-    f.write("key:" + dValue[i]+ "\n")  # ファイルに書き込む                                                                       
-    f.write("value:" + data[dValue[i]] + "\n")
-    # dJson = JSON.parse(dValue[i])
-    f.write("jsonDesitination: " + dJson["destination"].to_s + "\n")
-    f.write("jsonReplyToken: " + dJson["replyToken"].to_s + "\n")
-end
 
-channelAccessToken = "任意のチャンネルアクセストークン"
-replyJsonStr = "{
-        \"replyToken\": \"#{replyToken}\",
-        \"messages\":[
-            {
-                \"type\":\"text\",
-                \"text\":\"OK!\"
-            }
-        ]
-    }"#JSONを文字列で作って後でJSONに変えます
-
-replyJson = JSON.parse(replyJsonStr)
-
-httpReq.post(uri.path, replyJson, header = "Content-type: application/json\n" + "Authorization: Bearer #{channelAccessToken}")#ヘッダーを送ってJSONを送る
+print "Content-type: text/html\n\n"
 
 f=File.open("test_stdin.txt", "w")
 f.write("length:" + (dValue.length).to_s + "\n")
-f.write("Jsonlength:" + (dJson.length).to_s + "\n")
 for i in 0..(dValue.length - 1) do
     f.write("key:" + dValue[i]+ "\n")  # ファイルに書き込む                                                                       
     f.write("value:" + data[dValue[i]] + "\n")
-    # dJson = JSON.parse(dValue[i])
+    dJson = JSON.parse(dValue[i])
+    f.write("Jsonlength:" + (dJson.length).to_s + "\n")
     f.write("jsonDesitination: " + dJson["destination"].to_s + "\n")
-    f.write("jsonReplyToken: " + dJson["replyToken"].to_s + "\n")
+    f.write("jsonEvents: " + dJson['events'][0].to_s + "\n")
+    f.write("jsonReplyToken: " + dJson['events'][0]['replyToken'].to_s + "\n")
 end
+
+# channelAccessToken = "任意のチャンネルアクセストークン"
+# replyJsonStr = "{
+#         \"replyToken\": \"#{replyToken}\",
+#         \"messages\":[
+#             {
+#                 \"type\":\"text\",
+#                 \"text\":\"OK!\"
+#             }
+#         ]
+#     }"#JSONを文字列で作って後でJSONに変えます
+
+# replyJson = JSON.parse(replyJsonStr)
+
+# httpReq.post(uri.path, replyJson, header = "Content-type: application/json\n" + "Authorization: Bearer #{channelAccessToken}")#ヘッダーを送ってJSONを送る
+
+# f=File.open("test_stdin.txt", "w")
+# f.write("length:" + (dValue.length).to_s + "\n")
+# f.write("Jsonlength:" + (dJson.length).to_s + "\n")
+# for i in 0..(dValue.length - 1) do
+#     f.write("key:" + dValue[i]+ "\n")  # ファイルに書き込む                                                                       
+#     f.write("value:" + data[dValue[i]] + "\n")
+#     # dJson = JSON.parse(dValue[i])
+#     f.write("jsonDesitination: " + dJson["destination"].to_s + "\n")
+#     f.write("jsonReplyToken: " + dJson["replyToken"].to_s + "\n")
+# end
 
 # H = ["Content-type: application/json", "Authorization: Bearer #{channelAccessToken}"]
 
