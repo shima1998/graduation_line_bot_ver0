@@ -10,23 +10,77 @@ require "net/http"
 
 data = CGI.new()
 
-d = data.keys
-print "Content-type: text/html\n\n"
+targetUri = "https://api.line.me/v2/bot/message/reply"
+uri = URI.parse(targetUri)#URLをURIオブジェクトにしてRubyでオブジェクトとして使えるようにしている
+httpReq = Net::HTTP.new(uri.host, uri.port)
 
+dValue = data.keys#LINEAPIで使うJSONが格納されてる
+
+dJson = JSON.parse(dValue)#データをJSON化した
+
+replyToken = dJson['events'][0]['replyToken'].to_s
 
 f=File.open("test_stdin.txt", "w")
-f.write("length:" + (d.length).to_s + "\n")
-for i in 0..(d.length - 1) do
- f.write("key:" + d[i]+ "\n")  # ファイルに書き込む                                                                       
- f.write("value:" + data[d[i]] + "\n")
- dJson = JSON.parse(d[i])
- f.write("json: " + dJson["destination"].to_s + "\n")
+f.write("length:" + (dValue.length).to_s + "\n")
+f.write("Jsonlength:" + (dJson.length).to_s + "\n")
+for i in 0..(dValue.length - 1) do
+    f.write("key:" + dValue[i]+ "\n")  # ファイルに書き込む                                                                       
+    f.write("value:" + data[dValue[i]] + "\n")
+    # dJson = JSON.parse(dValue[i])
+    f.write("jsonDesitination: " + dJson["destination"].to_s + "\n")
+    f.write("jsonReplyToken: " + dJson["replyToken"].to_s + "\n")
 end
 
+channelAccessToken = "任意のチャンネルアクセストークン"
+replyJsonStr = "{
+        \"replyToken\": \"#{replyToken}\",
+        \"messages\":[
+            {
+                \"type\":\"text\",
+                \"text\":\"OK!\"
+            }
+        ]
+    }"#JSONを文字列で作って後でJSONに変えます
+
+replyJson = JSON.parse(replyJsonStr)
+
+httpReq.post(uri.path, replyJson, header = "Content-type: application/json\n" + "Authorization: Bearer #{channelAccessToken}")#ヘッダーを送ってJSONを送る
+
+f=File.open("test_stdin.txt", "w")
+f.write("length:" + (dValue.length).to_s + "\n")
+f.write("Jsonlength:" + (dJson.length).to_s + "\n")
+for i in 0..(dValue.length - 1) do
+    f.write("key:" + dValue[i]+ "\n")  # ファイルに書き込む                                                                       
+    f.write("value:" + data[dValue[i]] + "\n")
+    # dJson = JSON.parse(dValue[i])
+    f.write("jsonDesitination: " + dJson["destination"].to_s + "\n")
+    f.write("jsonReplyToken: " + dJson["replyToken"].to_s + "\n")
+end
+
+# H = ["Content-type: application/json", "Authorization: Bearer #{channelAccessToken}"]
+
+
+
+
+# 返信で送るJSONの形
+# 'Content-Type: application/json' 
+#  'Authorization: Bearer {channel access token}' 
+#  '{
+#     "replyToken":"nHuyWiB7yP5Zw52FIkcQobQuGDXCTA",
+#     "messages":[
+#         {
+#             "type":"text",
+#             "text":"Hello, user"
+#         },
+#         {
+#             "type":"text",
+#             "text":"May I help you?"
+#         }
+#     ]
+# }'
 
 ###########################################################################################
 ###########################################################################################
-
 # POSTで送られてきたJSONをまんまtxtに入れてみた結果                                          #
 ###########################################################################################
 # WebhookURLのverify時に送られるJSONは
