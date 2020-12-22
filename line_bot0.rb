@@ -6,12 +6,13 @@ require "uri"
 require "json"
 require "net/http"
 
-# Only receive POST_Data                                                                                                  
-# I want to receive POST_Data from CGI, but I couldn't get String. I get string "#<CGI:~~~~~>" from CGI only.             
+# Only receive POST_Data
+# I want to receive POST_Data from CGI, but I couldn't get String. I get string "#<CGI:~~~~~>" from CGI only.
+
 data = CGI.new()
 dValue = data.keys#LINEAPIで使うJSONが格納されてる
 dJson = JSON.parse(dValue[0])
-replyToken = dJson['events'][0]['replyToken'].to_s
+replyToken = dJson['events'][0]['replyToken']
 
 reqBody0 = {"first"=>["test","test2"],"second"=>[{"rep"=>"max","rep2"=>"max2"},{"rep"=>"max3","rep2"=>"max4"}], "third"=>"max5"}#テスト用変数
 
@@ -23,7 +24,6 @@ targetUri = "https://api.line.me/v2/bot/message/reply"
 uri = URI.parse(targetUri)#OK
 
 http = Net::HTTP.new(uri.host, uri.port)#
-
 http.use_ssl = true #HTTPS 使う場合は trueを毎回設定
 #http.verify_mode = OpenSSL::SSL::VERIFY_NONE#なんかだめだった
 
@@ -33,22 +33,15 @@ request["Authorization"] = "Bearer #{channelAccessToken}"
 
 reqBody = {"replyToken"=>"#{replyToken}","messages"=>[{"type"=>"text","text"=>"Hello, user"},{"type"=>"text","text"=>"May I help you?"}]}
 request.body = reqBody.to_json
+http.request(request)
 
-response = http.post_form(uri, request)
+#response = http.post_form(uri, request)
 
 #puts response.code, response.msg, response.body
 
 #response = Net::HTTP.start(uri.hostname, uri.port, http.use_ssl){|http|
  # http.request(request)
 #}
-
-print <<-EOF
-Content-type: text/html\n\n
-
-linebot
-EOF
-
-
 f=File.open("test_stdin.txt", "w")
     f.write("length:" + (dValue.length).to_s + "\n")
     f.write("targetURI:" + targetUri + "\n")
@@ -70,3 +63,10 @@ for i in 0..(dValue.length - 1) do
     f.write("jsonReplyToken: " + dJ['events'][0]['replyToken'].to_s + "\n")
 end
 f.close
+
+
+puts <<-EOF
+Content-type: text/html\n\n
+
+linebot
+EOF
